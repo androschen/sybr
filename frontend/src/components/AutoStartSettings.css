@@ -1,0 +1,88 @@
+.autostart-settings {
+  width: 100%;
+}
+
+.autostart-status {
+  margin-bottom: 20px;
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+.status-indicator.active {
+  color: #4ade80;
+}
+
+.status-indicator.inactive {
+  color: #ef4444;
+}
+
+.status-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.status-indicator.active .status-dot {
+  background: #4ade80;
+  box-shadow: 0 0 10px #4ade80;
+}
+
+.status-indicator.inactive .status-dot {
+  background: #ef4444;
+}
+
+.autostart-controls {
+  margin-bottom: 15px;
+}
+
+.btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1em;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+  backdrop-filter: blur(10px);
+  width: 100%;
+}
+
+.btn-primary {
+  background: rgba(74, 222, 128, 0.3);
+  color: white;
+  border: 2px solid rgba(74, 222, 128, 0.5);
+}
+
+.btn-primary:hover {
+  background: rgba(74, 222, 128, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(74, 222, 128, 0.3);
+}
+
+.btn-danger {
+  background: rgba(239, 68, 68, 0.3);
+  color: white;
+  border: 2px solid rgba(239, 68, 68, 0.5);
+}
+
+.btn-danger:hover {
+  background: rgba(239, 68, 68, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.autostart-info {
+  font-size: 0.9em;
+  color: rgba(255, 255, 255, 0.7);
+  font-style: italic;
+  margin-top: 10px;
+}
+

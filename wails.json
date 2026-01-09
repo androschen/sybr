@@ -1,0 +1,16 @@
+{
+  "$schema": "https://wails.io/schemas/config.v2.json",
+  "name": "sybr",
+  "outputfilename": "sybr",
+  "frontend": {
+    "dir": "./frontend/dist",
+    "install": "npm install",
+    "build": "npm run build",
+    "dev": "npm run dev"
+  },
+  "author": {
+    "name": "",
+    "email": ""
+  }
+}
+
