@@ -23,6 +23,8 @@ export function OnWindowChanged(arg1:any):Promise<void>;
 
 export function RemoveFromBlocklist(arg1:string):Promise<void>;
 
+export function ShowSystemWarning(arg1:string,arg2:string):Promise<void>;
+
 export function ShowWindow():Promise<void>;
 
 export function StopMonitoring():Promise<void>;

@@ -219,7 +219,15 @@ func (ww *WindowWatcher) monitorLoop() {
 				if err == nil && bm != nil {
 					// Normalize executable name for comparison
 					exeLower := strings.ToLower(strings.TrimSpace(info.Exe))
-					if bm.IsBlocked(exeLower) {
+
+					// Debug logging
+					fmt.Printf("🔍 Checking if blocked: exe=%s\n", exeLower)
+
+					isBlocked := bm.IsBlocked(exeLower)
+					fmt.Printf("🔍 IsBlocked result for '%s': %v\n", exeLower, isBlocked)
+
+					if isBlocked {
+						fmt.Printf("✅ BLOCKED APP DETECTED!\n")
 						// Only warn if this is a different app (avoid spam)
 						ww.mu.Lock()
 						shouldWarn := ww.lastWarnedExe != exeLower
@@ -235,7 +243,19 @@ func (ww *WindowWatcher) monitorLoop() {
 								displayName = blockedApp.DisplayName
 							}
 
-							// Emit warning event
+							fmt.Printf("⚠️  Blocked app detected: [%s] %s\n", exeLower, info.Title)
+
+							// Show native Windows MessageBox
+							message := fmt.Sprintf("You're trying to open a blocked application:\n\n%s\n\nWindow: %s", displayName, info.Title)
+							fmt.Printf("📢 Calling ShowSystemWarning...\n")
+							_, err := ShowSystemWarning("⚠️ Focus Warning", message)
+							if err != nil {
+								fmt.Printf("❌ Failed to show warning MessageBox: %v\n", err)
+							} else {
+								fmt.Printf("✅ MessageBox shown successfully\n")
+							}
+
+							// Also emit warning event for frontend (WarningModal component)
 							ww.mu.RLock()
 							ctx := ww.ctx
 							ww.mu.RUnlock()
@@ -245,9 +265,11 @@ func (ww *WindowWatcher) monitorLoop() {
 									"displayName":    displayName,
 									"title":          info.Title,
 								}
-								fmt.Printf("⚠️  Blocked app detected: [%s] %s\n", exeLower, info.Title)
+								fmt.Printf("📤 Emitting 'warning-detected' event to frontend\n")
 								runtime.EventsEmit(ctx, "warning-detected", warningData)
 							}
+						} else {
+							fmt.Printf("⏭️  Same blocked app, skipping duplicate warning\n")
 						}
 					} else {
 						// Reset last warned if app is not blocked
@@ -257,6 +279,8 @@ func (ww *WindowWatcher) monitorLoop() {
 						}
 						ww.mu.Unlock()
 					}
+				} else {
+					fmt.Printf("⚠️  Failed to get blocklist manager: %v\n", err)
 				}
 
 				// Emit Wails event if context is available

@@ -130,6 +130,19 @@ func (a *App) HideWindow() {
 	}
 }
 
+// ShowSystemWarning displays a native Windows MessageBox that stays on top of all windows
+// This is an "annoying" modal that appears above everything else
+func (a *App) ShowSystemWarning(title, message string) error {
+	fmt.Printf("📢 ShowSystemWarning called: title=%s, message=%s\n", title, message)
+	result, err := ShowSystemWarning(title, message)
+	if err != nil {
+		fmt.Printf("❌ ShowSystemWarning error: %v\n", err)
+		return err
+	}
+	fmt.Printf("✅ ShowSystemWarning completed, result code: %d\n", result)
+	return nil
+}
+
 // AddToBlocklist adds an app to the blocklist
 func (a *App) AddToBlocklist(executableName string, displayName string) error {
 	// Add panic recovery

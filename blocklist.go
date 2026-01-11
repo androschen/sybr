@@ -41,7 +41,7 @@ func getBlocklistPath() (string, error) {
 		}
 		wd = filepath.Dir(exePath)
 	}
-	
+
 	blocklistPath := filepath.Join(wd, "blocking_list.json")
 	fmt.Printf("📁 Blocklist file path: %s\n", blocklistPath)
 	return blocklistPath, nil
@@ -151,13 +151,13 @@ func (bm *BlocklistManager) AddApp(executableName, displayName string) error {
 	})
 
 	fmt.Printf("📝 Added app to in-memory list. Total apps: %d\n", len(bm.apps))
-	
+
 	err := bm.save()
 	if err != nil {
 		fmt.Printf("❌ Failed to save blocklist: %v\n", err)
 		return err
 	}
-	
+
 	fmt.Printf("✅ Blocklist saved successfully to: %s\n", bm.filePath)
 	return nil
 }
@@ -207,7 +207,7 @@ func (bm *BlocklistManager) GetApps() []BlockedApp {
 	apps := make([]BlockedApp, len(bm.apps))
 	copy(apps, bm.apps)
 	bm.mu.RUnlock()
-	
+
 	fmt.Printf("📋 GetApps returning %d apps: %v\n", len(apps), apps)
 	return apps
 }
@@ -232,11 +232,15 @@ func (bm *BlocklistManager) IsBlocked(executableName string) bool {
 	// Normalize for comparison
 	executableName = strings.ToLower(strings.TrimSpace(executableName))
 
-	for _, app := range bm.apps {
+	fmt.Printf("🔍 IsBlocked: checking '%s' against %d apps\n", executableName, len(bm.apps))
+	for i, app := range bm.apps {
+		fmt.Printf("   [%d] Comparing with: '%s'\n", i, app.ExecutableName)
 		if app.ExecutableName == executableName {
+			fmt.Printf("   ✅ MATCH FOUND!\n")
 			return true
 		}
 	}
+	fmt.Printf("   ❌ No match found\n")
 	return false
 }
 

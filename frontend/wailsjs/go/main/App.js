@@ -42,6 +42,10 @@ export function RemoveFromBlocklist(arg1) {
   return window['go']['main']['App']['RemoveFromBlocklist'](arg1);
 }
 
+export function ShowSystemWarning(arg1, arg2) {
+  return window['go']['main']['App']['ShowSystemWarning'](arg1, arg2);
+}
+
 export function ShowWindow() {
   return window['go']['main']['App']['ShowWindow']();
 }
