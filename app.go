@@ -26,9 +26,18 @@ func (a *App) OnStartup(ctx context.Context) {
 // GetCurrentWindow returns the current active window information
 func (a *App) GetCurrentWindow() (*WindowInfo, error) {
 	if a.watcher == nil {
+		// Return nil instead of empty struct to indicate no watcher
 		return nil, nil
 	}
-	return a.watcher.GetActiveWindow()
+	info, err := a.watcher.GetActiveWindow()
+	if err != nil {
+		return nil, err
+	}
+	// Ensure we always return valid data
+	if info == nil {
+		return nil, nil
+	}
+	return info, nil
 }
 
 // OnWindowChanged is called when the active window changes

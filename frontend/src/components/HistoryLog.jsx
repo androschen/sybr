@@ -45,8 +45,15 @@ function HistoryLog({ history, onClear }) {
                   <span className="history-date">{entry.date}</span>
                   <span className="history-time-value">{entry.time}</span>
                 </div>
-                <div className="history-window-title">{entry.title || 'Unknown'}</div>
-                <div className="history-window-exe">{entry.exe || '-'}</div>
+                {/* Show terminal-style line if available, otherwise show formatted */}
+                {entry.terminalLine ? (
+                  <div className="history-terminal-line">{entry.terminalLine}</div>
+                ) : (
+                  <>
+                    <div className="history-window-title">{entry.title || 'Unknown'}</div>
+                    <div className="history-window-exe">{entry.exe || '-'}</div>
+                  </>
+                )}
               </div>
             ))}
           </div>

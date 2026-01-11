@@ -193,10 +193,11 @@ func (ww *WindowWatcher) monitorLoop() {
 				ww.currentExe = info.Exe
 				ww.mu.Unlock()
 
-				// Print to console for debugging
+				// Print to console for debugging (terminal output)
 				fmt.Printf("Active Window Changed: [%s] %s\n", info.Exe, info.Title)
 
 				// Emit Wails event if context is available
+				// This sends the data to the frontend history log
 				if ww.ctx != nil {
 					runtime.EventsEmit(ww.ctx, "window-changed", info)
 				}

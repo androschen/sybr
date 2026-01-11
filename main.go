@@ -56,7 +56,10 @@ func main() {
 		})
 	}()
 
-	// Create Wails application
+	// Create application with options
+	// In Wails v2.11, bindings are generated automatically for exported methods
+	// The App struct must be in the same package and methods must be exported
+	// Bindings will be available via window.go.main.App
 	err = wails.Run(&options.App{
 		Title:  "Window Monitor",
 		Width:  1200,
@@ -64,10 +67,7 @@ func main() {
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
-		BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 1},
-		// Bind the App struct to make it available in the frontend
-		// This allows React to call methods like GetCurrentWindow, EnableAutoStart, etc.
-		// Wails will automatically generate bindings for all exported methods
+		BackgroundColour: &options.RGBA{R: 18, G: 18, B: 18, A: 1},
 		OnStartup: func(ctx context.Context) {
 			// Call app's OnStartup
 			app.OnStartup(ctx)

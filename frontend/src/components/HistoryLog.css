@@ -87,6 +87,18 @@
   gap: 10px;
 }
 
+.history-terminal-line {
+  color: #00ff88;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: 13px;
+  white-space: pre;
+  margin-top: 4px;
+  padding: 4px 8px;
+  background: rgba(0, 255, 136, 0.1);
+  border-left: 2px solid #00ff88;
+  border-radius: 4px;
+}
+
 .history-item {
   background: rgba(255, 255, 255, 0.08);
   padding: 15px;
