@@ -36,6 +36,14 @@ func NewWindowWatcher(ctx context.Context) *WindowWatcher {
 	}
 }
 
+// SetContext sets the Wails context for event emission
+// This must be called with the context from App.OnStartup for events to work
+func (ww *WindowWatcher) SetContext(ctx context.Context) {
+	ww.mu.Lock()
+	defer ww.mu.Unlock()
+	ww.ctx = ctx
+}
+
 // GetActiveWindow returns the current active window's title and process name
 func (ww *WindowWatcher) GetActiveWindow() (*WindowInfo, error) {
 	// Get the foreground window handle
@@ -170,6 +178,8 @@ func (ww *WindowWatcher) monitorLoop() {
 	ticker := time.NewTicker(1 * time.Second)
 	defer ticker.Stop()
 
+	firstWindow := true
+
 	for {
 		select {
 		case <-ww.stopChan:
@@ -182,15 +192,22 @@ func (ww *WindowWatcher) monitorLoop() {
 				continue
 			}
 
+			// Skip if info is invalid
+			if info == nil || (info.Title == "" && info.Exe == "") {
+				continue
+			}
+
 			ww.mu.Lock()
 			titleChanged := ww.currentTitle != info.Title
 			exeChanged := ww.currentExe != info.Exe
+			isFirstWindow := firstWindow && (ww.currentTitle == "" && ww.currentExe == "")
 			ww.mu.Unlock()
 
-			if titleChanged || exeChanged {
+			if titleChanged || exeChanged || isFirstWindow {
 				ww.mu.Lock()
 				ww.currentTitle = info.Title
 				ww.currentExe = info.Exe
+				firstWindow = false
 				ww.mu.Unlock()
 
 				// Print to console for debugging (terminal output)
@@ -198,8 +215,14 @@ func (ww *WindowWatcher) monitorLoop() {
 
 				// Emit Wails event if context is available
 				// This sends the data to the frontend history log
-				if ww.ctx != nil {
-					runtime.EventsEmit(ww.ctx, "window-changed", info)
+				ww.mu.RLock()
+				ctx := ww.ctx
+				ww.mu.RUnlock()
+				if ctx != nil {
+					fmt.Printf("📤 Emitting event 'window-changed' with data: [%s] %s\n", info.Exe, info.Title)
+					runtime.EventsEmit(ctx, "window-changed", info)
+				} else {
+					fmt.Println("⚠️  Cannot emit event: context is nil")
 				}
 			}
 		}

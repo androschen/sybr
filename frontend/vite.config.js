@@ -9,6 +9,10 @@ export default defineConfig({
   },
   server: {
     port: 34115,
+    strictPort: true, // Fail if port is already in use
+    host: true, // Listen on all addresses
   },
+  // Ensure base path is correct
+  base: '/',
 })
 

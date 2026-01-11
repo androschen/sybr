@@ -38,9 +38,9 @@ func main() {
 	app := NewApp()
 	globalApp = app
 
-	// Create context and watcher
-	ctx := context.Background()
-	watcher := NewWindowWatcher(ctx)
+	// Create watcher with nil context initially
+	// The context will be set in OnStartup with the live Wails context
+	watcher := NewWindowWatcher(nil)
 	globalWatcher = watcher
 	app.watcher = watcher
 
@@ -57,31 +57,44 @@ func main() {
 	}()
 
 	// Create application with options
-	// In Wails v2.11, bindings are generated automatically for exported methods
-	// The App struct must be in the same package and methods must be exported
-	// Bindings will be available via window.go.main.App
+	// In Wails v2, we must explicitly bind the App struct using the Bind field
+	// This generates bindings that make methods available via window.go.main.App
+
+	// Check if we're in dev mode
+	// Wails v2 should automatically proxy to dev server when running wails dev
+	// But if it's not working, we can try to detect dev mode
+	isDev := os.Getenv("WAILS_ENV") == "dev" || os.Getenv("devmode") == "true"
+
+	assetServerOptions := &assetserver.Options{
+		Assets: assets,
+	}
+
+	// In dev mode, Wails should automatically proxy to Vite dev server
+	// Make sure Vite is running on http://localhost:34115 before starting Wails
+	if isDev {
+		fmt.Println("🔧 Dev mode detected - Wails should proxy to Vite dev server")
+		fmt.Println("🔧 Make sure Vite is running: cd frontend && npm run dev")
+	} else {
+		fmt.Println("📦 Production mode - using embedded assets")
+	}
+
 	err = wails.Run(&options.App{
-		Title:  "Window Monitor",
-		Width:  1200,
-		Height: 800,
-		AssetServer: &assetserver.Options{
-			Assets: assets,
-		},
+		Title:            "Window Monitor",
+		Width:            1200,
+		Height:           800,
+		AssetServer:      assetServerOptions,
 		BackgroundColour: &options.RGBA{R: 18, G: 18, B: 18, A: 1},
+		// Bind the app instance - this is critical for frontend access
+		Bind: []interface{}{
+			app,
+		},
 		OnStartup: func(ctx context.Context) {
-			// Call app's OnStartup
-			app.OnStartup(ctx)
-
-			// Store context
+			// Store context for systray menu
 			wailsCtx = ctx
-			watcher.ctx = ctx
 
-			// Start monitoring automatically
-			if err := watcher.StartMonitoring(); err != nil {
-				fmt.Printf("Failed to start window monitoring: %v\n", err)
-			} else {
-				fmt.Println("Window monitoring started successfully")
-			}
+			// Call app's OnStartup - this will set the context on the watcher
+			// and start monitoring with the correct Wails context
+			app.OnStartup(ctx)
 		},
 		OnShutdown: func(ctx context.Context) {
 			// Stop monitoring when app shuts down

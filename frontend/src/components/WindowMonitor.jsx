@@ -8,7 +8,12 @@ function WindowMonitor({ window }) {
       <div className="window-display">
         {window ? (
           <>
-            <div className="window-title">{window.title || 'Unknown'}</div>
+            <div 
+              key={`${window.title}-${window.exe}`}
+              className="window-title"
+            >
+              {window.title || 'Unknown'}
+            </div>
             <div className="window-exe">{window.exe || '-'}</div>
             <div className="status-indicator active">
               <span className="status-dot"></span>
