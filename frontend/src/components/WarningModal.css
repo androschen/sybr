@@ -1,0 +1,144 @@
+.warning-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: fadeIn 200ms ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.warning-modal {
+  background: #0a0a0a;
+  border: 1px solid #333333;
+  border-radius: 4px;
+  max-width: 500px;
+  width: 90%;
+  padding: 32px;
+  animation: slideUp 200ms ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.warning-modal-header {
+  margin-bottom: 24px;
+}
+
+.warning-modal-header h2 {
+  font-size: 1.5em;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.warning-modal-content {
+  margin-bottom: 32px;
+}
+
+.warning-message {
+  font-size: 1em;
+  color: #ffffff;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.warning-app-info {
+  padding: 20px;
+  background: transparent;
+  border: 1px solid #333333;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+.warning-app-name {
+  font-size: 1.125em;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 8px;
+}
+
+.warning-app-exe {
+  font-size: 0.875em;
+  color: #888888;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'Courier New', monospace;
+  margin-bottom: 8px;
+  letter-spacing: 0;
+}
+
+.warning-app-window {
+  font-size: 0.875em;
+  color: #888888;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #333333;
+}
+
+.warning-question {
+  font-size: 0.9375em;
+  color: #888888;
+  margin: 0;
+}
+
+.warning-modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.warning-modal-actions .btn {
+  min-width: 140px;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.875em;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 200ms ease;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: -0.01em;
+}
+
+.warning-modal-actions .btn-primary {
+  background: #ffffff;
+  color: #0a0a0a;
+  border: 1px solid #ffffff;
+}
+
+.warning-modal-actions .btn-primary:hover {
+  background: #f5f5f5;
+  border-color: #f5f5f5;
+}
+
+.warning-modal-actions .btn-secondary {
+  background: transparent;
+  color: #ffffff;
+  border: 1px solid #ffffff;
+}
+
+.warning-modal-actions .btn-secondary:hover {
+  background: #ffffff;
+  color: #0a0a0a;
+}

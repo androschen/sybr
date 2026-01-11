@@ -14,12 +14,13 @@ import (
 
 // WindowWatcher monitors the active window on Windows
 type WindowWatcher struct {
-	ctx          context.Context
-	currentTitle string
-	currentExe   string
-	mu           sync.RWMutex
-	stopChan     chan struct{}
-	running      bool
+	ctx           context.Context
+	currentTitle  string
+	currentExe    string
+	mu            sync.RWMutex
+	stopChan      chan struct{}
+	running       bool
+	lastWarnedExe string // Track last warned app to avoid spam
 }
 
 // WindowInfo represents information about the active window
@@ -212,6 +213,51 @@ func (ww *WindowWatcher) monitorLoop() {
 
 				// Print to console for debugging (terminal output)
 				fmt.Printf("Active Window Changed: [%s] %s\n", info.Exe, info.Title)
+
+				// Check if app is blocked
+				bm, err := GetBlocklistManager()
+				if err == nil && bm != nil {
+					// Normalize executable name for comparison
+					exeLower := strings.ToLower(strings.TrimSpace(info.Exe))
+					if bm.IsBlocked(exeLower) {
+						// Only warn if this is a different app (avoid spam)
+						ww.mu.Lock()
+						shouldWarn := ww.lastWarnedExe != exeLower
+						if shouldWarn {
+							ww.lastWarnedExe = exeLower
+						}
+						ww.mu.Unlock()
+
+						if shouldWarn {
+							blockedApp := bm.GetBlockedApp(exeLower)
+							displayName := exeLower
+							if blockedApp != nil && blockedApp.DisplayName != "" {
+								displayName = blockedApp.DisplayName
+							}
+
+							// Emit warning event
+							ww.mu.RLock()
+							ctx := ww.ctx
+							ww.mu.RUnlock()
+							if ctx != nil {
+								warningData := map[string]interface{}{
+									"executableName": exeLower,
+									"displayName":    displayName,
+									"title":          info.Title,
+								}
+								fmt.Printf("⚠️  Blocked app detected: [%s] %s\n", exeLower, info.Title)
+								runtime.EventsEmit(ctx, "warning-detected", warningData)
+							}
+						}
+					} else {
+						// Reset last warned if app is not blocked
+						ww.mu.Lock()
+						if ww.lastWarnedExe == exeLower {
+							ww.lastWarnedExe = ""
+						}
+						ww.mu.Unlock()
+					}
+				}
 
 				// Emit Wails event if context is available
 				// This sends the data to the frontend history log

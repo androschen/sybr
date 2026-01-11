@@ -3,9 +3,13 @@
 import {main} from '../models';
 import {context} from '../models';
 
+export function AddToBlocklist(arg1:string,arg2:string):Promise<void>;
+
 export function DisableAutoStart():Promise<void>;
 
 export function EnableAutoStart():Promise<void>;
+
+export function GetBlocklist():Promise<Array<main.BlockedApp>>;
 
 export function GetCurrentWindow():Promise<main.WindowInfo>;
 
@@ -16,6 +20,8 @@ export function IsAutoStartEnabled():Promise<boolean>;
 export function OnStartup(arg1:context.Context):Promise<void>;
 
 export function OnWindowChanged(arg1:any):Promise<void>;
+
+export function RemoveFromBlocklist(arg1:string):Promise<void>;
 
 export function ShowWindow():Promise<void>;
 

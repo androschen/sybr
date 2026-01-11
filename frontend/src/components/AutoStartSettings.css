@@ -85,6 +85,17 @@
   color: #0a0a0a;
 }
 
+.btn-secondary {
+  background: transparent;
+  color: #ffffff;
+  border: 1px solid #ffffff;
+}
+
+.btn-secondary:hover {
+  background: #ffffff;
+  color: #0a0a0a;
+}
+
 .autostart-info {
   font-size: 0.8125em;
   color: #888888;

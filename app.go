@@ -129,3 +129,54 @@ func (a *App) HideWindow() {
 		runtime.WindowHide(a.ctx)
 	}
 }
+
+// AddToBlocklist adds an app to the blocklist
+func (a *App) AddToBlocklist(executableName string, displayName string) error {
+	// Add panic recovery
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Printf("❌ PANIC in AddToBlocklist: %v\n", r)
+		}
+		fmt.Printf("📝 AddToBlocklist function exiting\n")
+	}()
+
+	fmt.Printf("📝 AddToBlocklist called: executableName=%s, displayName=%s\n", executableName, displayName)
+
+	bm, err := GetBlocklistManager()
+	if err != nil {
+		fmt.Printf("❌ Failed to get blocklist manager: %v\n", err)
+		return fmt.Errorf("failed to get blocklist manager: %w", err)
+	}
+
+	fmt.Printf("📝 Calling bm.AddApp...\n")
+	err = bm.AddApp(executableName, displayName)
+	if err != nil {
+		fmt.Printf("❌ Failed to add app: %v\n", err)
+		return err
+	}
+
+	fmt.Printf("✅ App added to blocklist successfully\n")
+	return nil
+}
+
+// RemoveFromBlocklist removes an app from the blocklist
+func (a *App) RemoveFromBlocklist(executableName string) error {
+	bm, err := GetBlocklistManager()
+	if err != nil {
+		return fmt.Errorf("failed to get blocklist manager: %w", err)
+	}
+	return bm.RemoveApp(executableName)
+}
+
+// GetBlocklist returns the list of blocked apps
+func (a *App) GetBlocklist() ([]BlockedApp, error) {
+	fmt.Printf("📋 GetBlocklist called\n")
+	bm, err := GetBlocklistManager()
+	if err != nil {
+		fmt.Printf("❌ Failed to get blocklist manager: %v\n", err)
+		return nil, fmt.Errorf("failed to get blocklist manager: %w", err)
+	}
+	apps := bm.GetApps()
+	fmt.Printf("✅ GetBlocklist returning %d apps\n", len(apps))
+	return apps, nil
+}

@@ -6,6 +6,8 @@ import './App.css'
 import WindowMonitor from './components/WindowMonitor'
 import HistoryLog from './components/HistoryLog'
 import AutoStartSettings from './components/AutoStartSettings'
+import BlocklistSettings from './components/BlocklistSettings'
+import WarningModal from './components/WarningModal'
 import { EventsOn } from './wailsjs/runtime/runtime'
 
 // We'll use window.go.main.App directly - that's what Wails provides
@@ -364,6 +366,10 @@ function App() {
             />
           </div>
 
+          <div className="card">
+            <BlocklistSettings />
+          </div>
+
           <div className="card card-full">
             <HistoryLog 
               history={history} 
@@ -371,6 +377,8 @@ function App() {
             />
           </div>
         </div>
+
+        <WarningModal />
       </div>
     </div>
   )
