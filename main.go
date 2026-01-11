@@ -34,7 +34,6 @@ func main() {
 		exePath, _ = filepath.Abs(exePath)
 	}
 
-	// Create app instance
 	app := NewApp()
 	globalApp = app
 
@@ -212,7 +211,11 @@ func getIcon() []byte {
 	// 2. Embed it: //go:embed icon.ico
 	// 3. var iconData []byte
 	// 4. Return iconData here
-	return nil
+	iconData, err := os.ReadFile("build/windows/icon.ico")
+	if err != nil {
+		return nil
+	}
+	return iconData
 }
 
 // getExecutablePath returns the current executable path
